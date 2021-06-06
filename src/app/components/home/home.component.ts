@@ -23,6 +23,10 @@ export class HomeComponent implements OnInit {
     artists: [],
   };
 
+  recentTracks: RecentTracks = {
+    tracks: [],
+  };
+
   private accessToken: any;
 
   constructor(
@@ -60,6 +64,10 @@ export class HomeComponent implements OnInit {
     }
     this.getCurrentUser(this.accessToken);
     this.getTopArtists(this.accessToken);
+    this.getRecentTracks(this.accessToken);
+    this.getArtistFollowState(this.accessToken);
+    console.log(this.topArtists);
+    console.log(this.accessToken);
   }
 
   getCurrentUser(accessToken: string): void {
@@ -81,12 +89,13 @@ export class HomeComponent implements OnInit {
       (res: any) => {
         for (let i = 0; i < 9; i++) {
           const entry = res.items[i];
+          const id = entry.uri.substring(15);
           const artist: Artist = {
             name: entry.name,
             totalFollowers: entry.followers.total,
             genres: entry.genres[0],
             imageUrl: entry.images[0].url,
-            uri: entry.uri,
+            id,
           };
           this.topArtists.artists.push(artist);
         }
@@ -95,6 +104,44 @@ export class HomeComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  getRecentTracks(accessToken: string): void {
+    this.spotifyService.getRecentTracks(accessToken).subscribe(
+      (res: any) => {
+        for (let i = 0; i < 3; i++) {
+          const entry = res.items[i];
+          const track: Track = {
+            trackName: entry.track.name,
+            artist: entry.track.artists[0].name,
+            albumName: entry.track.album.name,
+            imageUrl: entry.track.album.images[0].url,
+          };
+          this.recentTracks.tracks.push(track);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  getArtistFollowState(accessToken: string): void {
+    console.log(this.topArtists.artists.length);
+    for (const artist of this.topArtists.artists) {
+      console.log(artist);
+      this.spotifyService
+        .getArtistFollowState(accessToken, artist.id)
+        .subscribe(
+          (res: any) => {
+            const following: boolean = res[0];
+            artist.following = following;
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+    }
   }
 }
 
@@ -118,5 +165,17 @@ interface Artist {
   totalFollowers: number;
   genres: string[];
   imageUrl: string;
-  uri: string;
+  id: string;
+  following?: boolean;
+}
+
+interface RecentTracks {
+  tracks: Track[];
+}
+
+interface Track {
+  trackName: string;
+  artist: string;
+  albumName: string;
+  imageUrl: string;
 }

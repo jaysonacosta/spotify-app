@@ -11,7 +11,7 @@ export class SpotifyService {
   private clientSecret: string = '129240bc03cb4c3984e637ecf61dd543';
   private redirectUri: string = 'http://localhost:4200/home';
   private scopes: string =
-    'user-read-private user-read-email user-read-recently-played user-top-read';
+    'user-read-private user-read-email user-read-recently-played user-top-read user-follow-read';
 
   constructor(private http: HttpClient) {}
 
@@ -64,5 +64,28 @@ export class SpotifyService {
       }),
     };
     return this.http.get(url, httpOptions);
+  }
+
+  getRecentTracks(accessToken: string) {
+    const url = this.apiUrl + 'v1/me/player/recently-played';
+    const httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + accessToken,
+      }),
+    };
+    return this.http.get(url, httpOptions);
+  }
+
+  getArtistFollowState(accessToken: string, artistId: string) {
+    const url = this.apiUrl + 'v1/me/following/contains';
+    const httpOptions = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + accessToken
+    );
+    const params = new HttpParams().set('type', 'artist').set('ids', artistId);
+    return this.http.get(url, {
+      headers: httpOptions,
+      params: params,
+    });
   }
 }
