@@ -1,3 +1,24 @@
-h2 {
+h1,
+h2,
+h3 {
   color: #fff;
+}
+
+#artist-name-tag {
+  color: #000;
+  font-size: 22px;
+}
+#artist-info-tag {
+  color: #000;
+  font-size: 14px;
+}
+
+#artist-card {
+  height: 100%;
+}
+
+#artist-image {
+  height: 300px;
+  width: 300px;
+  border-radius: 5px;
 }

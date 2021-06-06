@@ -1,20 +1,67 @@
 <app-navbar></app-navbar>
 
-<div class="container pt-5">
-  <div class="row">
-    <div class="col">
-      <h2>Welcome back</h2>
+<ng-container *ngIf="user.name">
+  <div class="container pt-5">
+    <div class="row">
+      <div class="col">
+        <h1>Hello, {{ user.name }}</h1>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <h3>Your Favorite Artists</h3>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <ng-container *ngIf="topArtists.artists">
+        <ng-container *ngFor="let artist of topArtists.artists; let i = index">
+          <div class="col mb-4">
+            <div class="card shadow-sm" id="artist-card">
+              <div class="card-body">
+                <div class="row justify-content-center">
+                  <div class="col-auto">
+                    <img
+                      src="{{ artist.imageUrl }}"
+                      alt="{{ artist.name }}"
+                      id="artist-image"
+                    />
+                  </div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col">
+                    <span id="artist-name-tag"
+                      ><b>{{ i + 1 }}. {{ artist.name }}</b></span
+                    >
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <span id="artist-info-tag"
+                      ><b>Genre:</b> {{ artist.genres }}</span
+                    >
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <span id="artist-info-tag"
+                      ><b>Followers:</b> {{ artist.totalFollowers }}</span
+                    >
+                  </div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col">
+                    <button type="button" class="btn btn-primary">
+                      More Information
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
     </div>
   </div>
-  <div class="row">
-    <div class="col">
-      <input
-        type="text"
-        class="form-control"
-        [(ngModel)]="search.artistName"
-        #artistName="ngModel"
-        placeholder="Artist Name"
-      />
-    </div>
-  </div>
-</div>
+</ng-container>
