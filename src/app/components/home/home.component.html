@@ -101,9 +101,16 @@
                 <hr />
                 <div class="row">
                   <div class="col">
-                    <button type="button" class="btn btn-primary">
-                      More Information
-                    </button>
+                    <ng-container *ngIf="!artist.following; else notFollowing">
+                      <button type="button" class="btn btn-primary" (click)=followArtist(artist.id)>
+                        Follow
+                      </button>
+                    </ng-container>
+                    <ng-template #notFollowing>
+                      <button type="button" class="btn btn-danger">
+                        Unfollow
+                      </button>
+                    </ng-template>
                   </div>
                 </div>
               </div>

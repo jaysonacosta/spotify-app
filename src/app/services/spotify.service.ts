@@ -11,7 +11,7 @@ export class SpotifyService {
   private clientSecret: string = '129240bc03cb4c3984e637ecf61dd543';
   private redirectUri: string = 'http://localhost:4200/home';
   private scopes: string =
-    'user-read-private user-read-email user-read-recently-played user-top-read user-follow-read';
+    'user-read-private user-read-email user-read-recently-played user-top-read user-follow-read user-follow-modify';
 
   constructor(private http: HttpClient) {}
 
@@ -43,7 +43,9 @@ export class SpotifyService {
         Authorization: 'Basic ' + base64,
       }),
     };
-    return this.http.post(url, params, httpOptions);
+    return new Promise((res, rej) => {
+      this.http.post(url, params, httpOptions).toPromise().then(res).catch(rej);
+    });
   }
 
   getCurrentUser(accessToken: string) {
@@ -53,7 +55,9 @@ export class SpotifyService {
         Authorization: 'Bearer ' + accessToken,
       }),
     };
-    return this.http.get(url, httpOptions);
+    return new Promise((res, rej) => {
+      this.http.get(url, httpOptions).toPromise().then(res).catch(rej);
+    });
   }
 
   getTopArtists(accessToken: string) {
@@ -63,7 +67,9 @@ export class SpotifyService {
         Authorization: 'Bearer ' + accessToken,
       }),
     };
-    return this.http.get(url, httpOptions);
+    return new Promise((res, rej) => {
+      this.http.get(url, httpOptions).toPromise().then(res).catch(rej);
+    });
   }
 
   getRecentTracks(accessToken: string) {
@@ -73,7 +79,9 @@ export class SpotifyService {
         Authorization: 'Bearer ' + accessToken,
       }),
     };
-    return this.http.get(url, httpOptions);
+    return new Promise((res, rej) => {
+      this.http.get(url, httpOptions).toPromise().then(res).catch(rej);
+    });
   }
 
   getArtistFollowState(accessToken: string, artistId: string) {
@@ -83,9 +91,28 @@ export class SpotifyService {
       'Bearer ' + accessToken
     );
     const params = new HttpParams().set('type', 'artist').set('ids', artistId);
-    return this.http.get(url, {
+    return new Promise((res, rej) => {
+      this.http
+        .get(url, {
+          headers: httpOptions,
+          params: params,
+        })
+        .toPromise()
+        .then(res)
+        .catch(rej);
+    });
+  }
+
+  followArtist(accessToken: string, artistId: string) {
+    const url = this.apiUrl + 'v1/me/following';
+    const httpOptions = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + accessToken
+    );
+    const params = new HttpParams().set('type', 'artist').set('ids', artistId);
+    this.http.put(url, {
       headers: httpOptions,
       params: params,
-    });
+    }).subscribe(res => console.log(res), err => console.log(err));
   }
 }
